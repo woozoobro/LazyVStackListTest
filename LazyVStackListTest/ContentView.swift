@@ -51,7 +51,7 @@ struct ContentView: View {
       /// `let _ = Self._printChanges()`
       /// 주의! body의 변경사항을 추적해주는 방법이지만 이 줄을 고대로 남겨두면
       /// 퍼포먼스에 영향이 생길 수 있다는 거 인지하기.
-//      let _ = Self._printChanges()
+      let _ = Self._printChanges()
       
       NavigationStack(path: $navPathFiner.path) {
 //         TestList(vm: vm)
@@ -121,21 +121,22 @@ struct TestScrollWithLazyVStack: View {
 }
 
 //MARK: - 리스트 뷰로 Post를 구성
-fileprivate
-struct TestList: View {
-   @ObservedObject var vm: ContentViewModel
-   var body: some View {
-      List {
-         ForEach($vm.list) { $post in
-            PostRow(post: $post)
-         }
-      }
-   }
-}
+//fileprivate
+//struct TestList: View {
+//   @ObservedObject var vm: ContentViewModel
+//   var body: some View {
+//      List {
+//         ForEach($vm.list) { $post in
+//            PostRow(post: $post)
+//         }
+//      }
+//   }
+//}
 
 fileprivate
 struct PostRow: View {
    @Binding var post: Post
+//   let post: Post
    
    @EnvironmentObject var navPathFinder: NavigationPathFinder
    var body: some View {
