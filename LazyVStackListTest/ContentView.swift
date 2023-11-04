@@ -36,23 +36,25 @@ class ContentViewModel: ObservableObject {
    
    @MainActor
    func getPosts() async {
-      //    try? await Task.sleep(for: .seconds(1))
-      for i in 0...1000 {
+      for i in 1...1000 {
          list.append(Post(title: "\(i)번째 포스트", url: URL(string: "https://picsum.photos/id/\(i)/200")))
       }
       print("🧵현재 포스트 갯수",list.count)
    }
 }
 
-
 struct ContentView: View {
    @StateObject private var vm = ContentViewModel()
    @StateObject private var navPathFiner = NavigationPathFinder()
    
    var body: some View {
-      let _ = Self._printChanges()
+      /// `let _ = Self._printChanges()`
+      /// 주의! body의 변경사항을 추적해주는 방법이지만 이 줄을 고대로 남겨두면
+      /// 퍼포먼스에 영향이 생길 수 있다는 거 인지하기.
+//      let _ = Self._printChanges()
+      
       NavigationStack(path: $navPathFiner.path) {
-         //      TestList(vm: vm)
+//         TestList(vm: vm)
          TestScrollWithLazyVStack(vm: vm)
             .navigationDestination(for: ViewOptions.self) { destination in
                destination.view()
@@ -74,10 +76,10 @@ struct ContentView: View {
    }
 }
 
-//MARK: - 스크롤 뷰와 LazyVStack
+//MARK: - 스크롤 뷰와 LazyVStack으로 Post를 구성
+fileprivate
 struct TestScrollWithLazyVStack: View {
    @ObservedObject var vm: ContentViewModel
-   @EnvironmentObject private var navPathFinder: NavigationPathFinder
    
    var body: some View {
       ScrollViewReader { proxy in
@@ -118,22 +120,23 @@ struct TestScrollWithLazyVStack: View {
    }
 }
 
-//MARK: - 리스트 뷰로
-//struct TestList: View {
-//  @ObservedObject var vm: ContentViewModel
-//  @EnvironmentObject private var navPathFinder: NavigationPathFinder
-//  var body: some View {
-//    List {
-//      ForEach(vm.list) { post in
-//        PostRow(post: post)
-//      }
-//    }
-//  }
-//}
+//MARK: - 리스트 뷰로 Post를 구성
+fileprivate
+struct TestList: View {
+   @ObservedObject var vm: ContentViewModel
+   var body: some View {
+      List {
+         ForEach($vm.list) { $post in
+            PostRow(post: $post)
+         }
+      }
+   }
+}
 
+fileprivate
 struct PostRow: View {
    @Binding var post: Post
-   //  let post: Post
+   
    @EnvironmentObject var navPathFinder: NavigationPathFinder
    var body: some View {
       Button {
@@ -150,6 +153,7 @@ struct PostRow: View {
    }
 }
 
+fileprivate
 struct Destination: View {
    let post: Post
    var body: some View {
@@ -170,6 +174,7 @@ struct Destination: View {
    }
 }
 
+fileprivate
 struct RandomImage: View {
    let url: URL?
    var body: some View {
